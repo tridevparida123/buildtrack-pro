@@ -1,88 +1,115 @@
-# 🏗️ ApexBuild — Construction & Enterprise Portal
+# 🏗️ BuildTrack Pro — Real Estate Construction & Digital Work Diary System
 
-An enterprise-grade, multi-project real estate construction management and digital work diary portal built with **Java 17+**, **Spring Boot 3**, **Spring Data JPA**, **MySQL**, and **Thymeleaf**.
+[![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/Database-MySQL%208.0-blue.svg)](https://www.mysql.com/)
+[![Thymeleaf](https://img.shields.io/badge/Template-Thymeleaf%20HTML5-green.svg)](https://www.thymeleaf.org/)
+[![License](https://img.shields.io/badge/License-Enterprise%20Proprietary-navy.svg)](#)
 
-Designed with the **Nova Astro** architectural editorial design system featuring clean typography, warm off-white tones, deep navy accents, and real-time operational dashboard capabilities.
+An enterprise-grade, production-ready multi-project real estate construction management portal and digital work diary system built with **Java 17+**, **Spring Boot 3**, **Spring Data JPA**, **MySQL**, and **Thymeleaf**.
+
+Designed with the **Nova Astro** architectural editorial aesthetic featuring clean typography (*Outfit* & *Plus Jakarta Sans*), generous whitespace, warm off-white tones, deep navy accents, interactive Chart.js visualizations, and real-time operational site controls.
+
+---
+
+## 📸 Overview & Features
+
+- **Multi-Site Construction Management:** Monitor active projects, initial approved budgets, expenditure, burn rates, and progress % across sites.
+- **Role-Based Access Control (RBAC):** Server-side authorization enforcing 7 operational roles (Super Admin, Company Admin, Project Manager, Accountant, Legal Officer, Site Supervisor, Read-only Auditor).
+- **Daily Labour & Wage Diary:** Track daily attendance per trade gang (Masonry, Steel Fixing, etc.), daily rates, overtime hours, automatic gross wages, and outstanding dues.
+- **Material Procurement & Invoice Tracking:** Record vendor purchase orders (POs), delivery bills, tax calculations, partial payments, and live balance recalculation.
+- **Central Financial Ledger:** Double-entry transaction logging (`EXPENSE`, `PAYMENT_SUPPLIER`, `PAYMENT_LABOUR`, `ADVANCE`, `RECEIPT_CLIENT`).
+- **Legal Compliance & Document Management:** Track building plan sanctions, NOC approvals, environmental permits, issuing authorities, and expiry dates.
+- **Digital Site Work Diary:** Log daily site work summaries, weather conditions, temperature, and photographic evidence.
+- **Weekly Work Schedule & Milestones:** Milestone planning, target completion dates, progress percentages, and delay tracking.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Backend Framework:** Java 17+ / Java 21+, Spring Boot 3.3.4 (Spring MVC, Spring Data JPA)
-- **Database Engine:** MySQL 8.0+ (via JDBC driver with Hibernate DDL auto-schema updating)
-- **Frontend Template Engine:** Thymeleaf HTML5
-- **UI Framework & Design Tokens:** Bootstrap 5.3, Bootstrap Icons, Nova Architectural Theme (`/css/nova-theme.css`)
-- **Data Visualizations:** Chart.js 4.4+
-- **Build System:** Apache Maven
+| Layer | Technology |
+| :--- | :--- |
+| **Backend Framework** | Java 17+ / 21+, Spring Boot 3.3.4 (Spring MVC, Spring Data JPA) |
+| **Database Engine** | MySQL 8.0+ (with Hibernate DDL Auto Schema Generation) |
+| **Frontend Template Engine** | Thymeleaf 3.1+ HTML5 |
+| **UI Design System** | Bootstrap 5.3, Bootstrap Icons, Nova Architectural Theme (`/css/nova-theme.css`) |
+| **Data Visualizations** | Chart.js 4.4+ |
+| **Build System** | Apache Maven |
 
 ---
 
-## 👥 Role-Based Portals & Permissions
+## 👥 Role-Based Access Control (RBAC) Matrix
 
-The application implements a 7-tier Role-Based Access Control (RBAC) authorization matrix:
+The system enforces strict server-side authorization checks across 7 organizational roles:
 
-| Portal & Role | Role Code | Scope & Operational Capabilities |
+| Role Name | Code | Scope & Capabilities |
 | :--- | :--- | :--- |
-| **Owner / Super Admin** | `SUPER_ADMIN` | Global executive control across all projects, user approval governance, system settings. |
-| **Owner / Company Admin** | `COMPANY_ADMIN` | Executive portfolio visibility, corporate budget approvals, and staff assignments. |
-| **Manager / Project Lead** | `PROJECT_MANAGER` | Operational control of assigned site projects, purchase order approvals, task scheduling. |
-| **Accountant Portal** | `ACCOUNTANT` | Financial ledger entries, payment disbursements (RTGS/Cheque/Cash), supplier dues. |
-| **Legal Officer Portal** | `LEGAL_OFFICER` | Building plan sanctions, statutory NOC clearances, environmental permits, expiry alerts. |
-| **Supervisor Portal** | `SITE_SUPERVISOR` | Daily labour attendance logging, wage calculations, site photo logs, digital work diary entries. |
-| **Auditor Portal** | `AUDITOR` | Read-only inspection of ledgers, audit logs, compliance records, and management reports. |
+| **Super Administrator** | `SUPER_ADMIN` | Global executive control across all projects, user approval governance, system settings. |
+| **Company Administrator** | `COMPANY_ADMIN` | Executive portfolio visibility, corporate budget approvals, and staff assignments. |
+| **Project Manager** | `PROJECT_MANAGER` | Operational control of assigned site projects, purchase order approvals, task scheduling. |
+| **Accountant** | `ACCOUNTANT` | Financial ledger entries, payment disbursements (RTGS/Cheque/Cash), supplier dues tracking. |
+| **Legal Officer** | `LEGAL_OFFICER` | Building plan sanctions, statutory NOC clearances, environmental permits, expiry alerts. |
+| **Site Supervisor** | `SITE_SUPERVISOR` | Daily labour attendance logging, wage calculations, site photo logs, digital work diary entries. |
+| **Read-only Auditor** | `AUDITOR` | Read-only inspection of ledgers, audit logs, compliance records, and management reports. |
 
 ---
 
-## 🚀 Quick Start & Local Execution
+## 📁 Directory Structure
+
+```
+buildtrack-pro/
+├── pom.xml                                           # Maven dependencies (Spring Boot, Data JPA, MySQL, Thymeleaf)
+├── README.md                                         # Project documentation
+├── .gitignore                                        # Java/Maven Git ignore rules
+└── src/
+    └── main/
+        ├── java/com/novaconstruct/
+        │   ├── NovaConstructApplication.java          # Spring Boot main entry point
+        │   ├── controller/
+        │   │   ├── AuthController.java               # Login, Logout, Profile, User List endpoints
+        │   │   ├── GlobalControllerAdvice.java       # User session model injector
+        │   │   └── ProjectController.java            # Project List, Create, Detail & Module POST handlers
+        │   ├── model/                                # JPA Entities & Enums
+        │   │   ├── User.java                         # User entity & RBAC permission helpers
+        │   │   ├── Project.java                      # Core Project model with live financial aggregates
+        │   │   ├── ProjectMembership.java            # User-Project role mapping
+        │   │   ├── LabourEntry.java                  # Daily labour attendance & wage calculations
+        │   │   ├── Supplier.java                     # Material vendor & GSTIN tracking
+        │   │   ├── MaterialPurchaseOrder.java        # PO procurement model
+        │   │   ├── MaterialInvoice.java              # Vendor delivery invoice & live balance recalculation
+        │   │   ├── InvoicePayment.java               # Payment settlement record
+        │   │   ├── FinancialTransaction.java         # Consolidated double-entry ledger
+        │   │   ├── BudgetAllocation.java             # Category budget breakdown
+        │   │   ├── LegalDocument.java                # Sanction plans & permits
+        │   │   ├── ProjectContact.java               # Stakeholder directory
+        │   │   ├── DailyDiaryEntry.java              # Digital work diary & site logs
+        │   │   └── WorkPlanTask.java                 # Weekly milestone scheduling
+        │   ├── repository/                           # Spring Data JPA interfaces
+        │   └── service/
+        │       └── DataInitializer.java              # Startup Data Seeder (Populates demo accounts & site data)
+        └── resources/
+            ├── application.properties                 # MySQL database connection settings
+            ├── static/
+            │   ├── css/nova-theme.css                 # Custom Nova Astro editorial design system
+            │   └── images/hero-person.png             # Site director artwork
+            └── templates/                             # Thymeleaf HTML Templates
+                ├── base.html                          # Master base layout
+                ├── accounts/                          # login.html, profile.html, user_list.html
+                ├── components/                        # navbar.html, messages.html, footer.html
+                └── projects/                          # project_list.html, project_form.html, project_detail.html
+```
+
+---
+
+## 🚀 Getting Started & Local Execution
 
 ### 1. Prerequisites
 - **Java Development Kit (JDK):** Version 17 or higher (`java -version`)
 - **Apache Maven:** Version 3.8+ (`mvn -version`)
 - **MySQL Database Server:** Running on `localhost:3306`
 
-### 2. Configure Database Connection
+### 2. Database Configuration
 Set environment variables or update fallback values in `src/main/resources/application.properties`:
-
-```bash
-export SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/novaconstruct?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
-export SPRING_DATASOURCE_USERNAME="root"
-export SPRING_DATASOURCE_PASSWORD="your_mysql_password"
-```
-
-### 3. Build & Install Dependencies
-```bash
-mvn clean install
-```
-
-### 4. Launch Application
-```bash
-mvn spring-boot:run
-```
-
-Visit the application in your web browser at:  
-👉 **`http://localhost:8080/accounts/login`**
-
----
-
-## 🔑 Seeded Demo Credentials
-
-All test accounts share the default password: **`Admin@12345`**
-
-| Role | Username | Permissions Scope |
-| :--- | :--- | :--- |
-| **Super Administrator** | `superadmin` | Full Global Executive Rights |
-| **Company Administrator** | `companyadmin` | Multi-Project Corporate View |
-| **Project Manager** | `pm_lead` | Active Site Operational Control |
-| **Accountant** | `accountant` | Ledgers, Invoices & Disbursements |
-| **Legal Officer** | `legal_officer` | Permits, NOCs & Compliance |
-| **Site Supervisor** | `supervisor` | Labour Logs & Daily Work Diary |
-| **Auditor** | `auditor` | Read-only Audit Inspection |
-
----
-
-## 🔒 Security & Environment Configuration
-
-Database credentials and environment configuration are parameterized using Spring SpEL expressions:
 
 ```properties
 spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/novaconstruct?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
@@ -90,9 +117,50 @@ spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:root}
 ```
 
-No plain-text production keys or sensitive database passwords are stored in public source control commits.
+### 3. Build & Install Dependencies
+```bash
+mvn clean install
+```
+
+### 4. Run Development Server
+```bash
+mvn spring-boot:run
+```
+
+Visit the application in your browser:  
+👉 **`http://localhost:8080/accounts/login`**
+
+---
+
+## 🔑 Demo Login Credentials
+
+Upon application startup, `DataInitializer.java` seeds 7 demonstration accounts into MySQL:
+
+| Role | Username | Default Password |
+| :--- | :--- | :--- |
+| **Super Administrator** | `superadmin` | `Admin@12345` |
+| **Company Administrator** | `companyadmin` | `Admin@12345` |
+| **Project Manager** | `pm_lead` | `Admin@12345` |
+| **Accountant** | `accountant` | `Admin@12345` |
+| **Legal Officer** | `legal_officer` | `Admin@12345` |
+| **Site Supervisor** | `supervisor` | `Admin@12345` |
+| **Read-only Auditor** | `auditor` | `Admin@12345` |
+
+---
+
+## 🔒 Security & Environment Safeguards
+
+Database configuration properties are parameterized using Spring SpEL expressions:
+
+```properties
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/novaconstruct...}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:root}
+```
+
+No hardcoded production secrets or database passwords are saved in public source control commits.
 
 ---
 
 ## 📝 License
-Corporate Construction System — Enterprise Proprietary & Restricted Distribution.
+BuildTrack Pro — Enterprise Proprietary & Restricted Distribution.
