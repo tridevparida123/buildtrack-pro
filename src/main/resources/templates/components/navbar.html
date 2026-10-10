@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="navbar">
+  <!-- Nova Top Announcement Bar (Construction Portal) -->
+  <div class="nova-top-bar d-none d-md-block">
+    <div class="nova-container d-flex justify-content-between align-items-center">
+      <div>
+        <span class="text-white-50">Enterprise Real Estate Construction Management &amp; Digital Work Diary System</span>
+      </div>
+      <div class="d-flex align-items-center gap-4">
+        <a th:href="${user != null ? '/projects' : '/accounts/login'}" class="small">
+          <i class="bi bi-journal-bookmark me-1"></i> Work Diary Portal
+        </a>
+        <a th:if="${user != null and user.canManageProject()}" th:href="@{/projects/create}" class="nova-top-pill">
+          <i class="bi bi-plus-circle me-1"></i> Add New Project
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Construction Management Navbar -->
+  <header class="nova-header">
+    <div class="nova-container">
+      <div class="nova-header-inner">
+        <!-- Left: Brand Logo -->
+        <a th:href="@{/projects}" class="nova-logo">
+          <span>NOVA</span>
+          <span class="badge bg-warning text-dark font-monospace fs-6 px-2 py-1 ms-1">CONSTRUCT</span>
+        </a>
+
+        <!-- Center: Construction Operational Links -->
+        <ul class="nova-nav-links">
+          <li class="nova-nav-item">
+            <a th:href="@{/projects#portfolio-section}">Projects</a>
+          </li>
+          <li class="nova-nav-item">
+            <a th:href="@{/projects#operations-section}">Construction Operations</a>
+          </li>
+          <li class="nova-nav-item">
+            <a th:href="@{/projects#portfolio-section}">Project Portfolio</a>
+          </li>
+          <li class="nova-nav-item">
+            <a th:href="@{/projects#workdiary-section}">Work Diary</a>
+          </li>
+          <li th:if="${user != null and (user.isCompanyAdmin() or user.primaryRole.name() == 'PROJECT_MANAGER')}" class="nova-nav-item">
+            <a th:href="@{/accounts/users}">Team &amp; Roles</a>
+          </li>
+        </ul>
+
+        <!-- Right: Currency Indicator & Authenticated Actions -->
+        <div class="nova-header-actions">
+          <div class="nova-lang-selector d-none d-sm-block">
+            <span class="badge bg-light text-dark border font-monospace">INR (₹)</span>
+          </div>
+
+          <div th:if="${user != null}" class="dropdown">
+            <button class="btn btn-hero-primary py-2 px-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.88rem; box-shadow: none;">
+              <i class="bi bi-person-circle"></i>
+              <span class="d-none d-lg-inline" th:text="${user.firstName != null and !user.firstName.isBlank() ? user.firstName : user.username}">User</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-2">
+              <li><h6 class="dropdown-header text-uppercase tracking-wider small" th:text="${user.organization != null ? user.organization : 'Nova Enterprise'}">Nova Enterprise</h6></li>
+              <li><a class="dropdown-item py-2" th:href="@{/accounts/profile}"><i class="bi bi-person me-2"></i> My Profile</a></li>
+              <li><a class="dropdown-item py-2" th:href="@{/projects}"><i class="bi bi-grid-1x2 me-2"></i> All Projects</a></li>
+              <li th:if="${user.canManageProject()}"><a class="dropdown-item py-2" th:href="@{/projects/create}"><i class="bi bi-plus-circle me-2"></i> Add New Project</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item py-2 text-danger" th:href="@{/accounts/logout}"><i class="bi bi-box-arrow-right me-2"></i> Log Out</a></li>
+            </ul>
+          </div>
+          
+          <div th:if="${user == null}">
+            <a th:href="@{/accounts/login}" class="btn-hero-primary py-2 px-4" style="font-size: 0.9rem;">
+              <i class="bi bi-lock me-1"></i> Work Diary Portal
+            </a>
+          </div>
+
+          <!-- Mobile Menu Toggle Button -->
+          <button class="nova-mobile-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#novaMobileDrawer" aria-controls="novaMobileDrawer" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Offcanvas Drawer -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="novaMobileDrawer" aria-labelledby="novaMobileDrawerLabel">
+    <div class="offcanvas-header border-bottom">
+      <h5 class="offcanvas-title font-heading fw-bold" id="novaMobileDrawerLabel">NOVA CONSTRUCT</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column justify-content-between">
+      <ul class="list-unstyled d-flex flex-column gap-3 fs-5 fw-semibold pt-2">
+        <li><a th:href="@{/projects#portfolio-section}" class="text-decoration-none text-dark d-block py-1">Project Portfolio</a></li>
+        <li><a th:href="@{/projects#operations-section}" class="text-decoration-none text-dark d-block py-1">Construction Operations</a></li>
+        <li><a th:href="@{/projects#workdiary-section}" class="text-decoration-none text-dark d-block py-1">Work Diary</a></li>
+        <li th:if="${user != null and user.canManageProject()}">
+          <a th:href="@{/projects/create}" class="text-decoration-none text-dark d-block py-1 text-primary"><i class="bi bi-plus-circle me-1"></i> Add New Project</a>
+        </li>
+        <li th:if="${user != null and (user.isCompanyAdmin() or user.primaryRole.name() == 'PROJECT_MANAGER')}">
+          <a th:href="@{/accounts/users}" class="text-decoration-none text-dark d-block py-1">Team &amp; Roles</a>
+        </li>
+        <li th:if="${user != null}">
+          <a th:href="@{/accounts/profile}" class="text-decoration-none text-dark d-block py-1">My Profile</a>
+        </li>
+      </ul>
+
+      <div class="border-top pt-4">
+        <div th:if="${user != null}" class="d-flex align-items-center justify-content-between mb-3">
+          <div>
+            <div class="fw-bold" th:text="${user.fullName}">User Name</div>
+            <div class="small text-muted" th:text="${user.primaryRole.displayName}">Role</div>
+          </div>
+          <a th:href="@{/accounts/logout}" class="btn btn-sm btn-outline-danger">Log Out</a>
+        </div>
+        <div th:if="${user == null}">
+          <a th:href="@{/accounts/login}" class="btn-hero-primary w-100 py-3 text-center mb-2">
+            Work Diary Portal Login
+          </a>
+        </div>
+        <div class="text-center text-muted small mt-2">
+          Default Currency: <strong>Indian Rupee (₹ INR)</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

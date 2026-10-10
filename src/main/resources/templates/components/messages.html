@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="messages">
+  <div class="container mt-3">
+    <div th:if="${success != null}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-check-circle-fill text-success fs-5"></i>
+      <div class="flex-grow-1" th:text="${success}">Success message</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show shadow-sm border-0 d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+      <div class="flex-grow-1" th:text="${error}">Error message</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${info != null}" class="alert alert-info alert-dismissible fade show shadow-sm border-0 d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-info-circle-fill text-info fs-5"></i>
+      <div class="flex-grow-1" th:text="${info}">Info message</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

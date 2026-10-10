@@ -1,0 +1,42 @@
+# Compiled Java Class & Target Files
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# IDE & Tooling Configurations
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# OS & Temp Files
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+*.swp
+
+# Logs & Database Files
+*.log
+logs/
+*.sqlite3
+*.db
+
+# Environment & Secret Files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Maven Wrapper & Cache
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar

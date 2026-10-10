@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${project.name + ' - Workspace Dashboard'}">Project Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" th:href="@{/css/nova-theme.css}" href="/css/nova-theme.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <div th:replace="~{components/navbar :: navbar}"></div>
+  <div th:replace="~{components/messages :: messages}"></div>
+
+  <main class="flex-grow-1 w-100" style="min-width: 0;">
+    <div class="nova-container py-4">
+      
+      <!-- Project Header Banner -->
+      <div class="nova-card p-4 mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="badge bg-dark font-monospace text-uppercase" th:text="${project.code}">PRJ-2026-001</span>
+              <span class="badge bg-success" th:text="${project.status.displayName}">Active Construction</span>
+              <span class="badge bg-light text-dark border font-monospace">INR (₹)</span>
+            </div>
+            <h1 class="font-heading fw-bold fs-2 mb-1" th:text="${project.name}">Project Name</h1>
+            <div class="text-muted small">
+              <i class="bi bi-geo-alt me-1"></i><span th:text="${project.location}">Location</span>
+              <span class="mx-2">&bull;</span>
+              <i class="bi bi-building me-1"></i>Client: <strong th:text="${project.clientName}">Client</strong>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <div class="small text-muted mb-1">Construction Progress</div>
+            <div class="fs-4 fw-bold text-dark mb-1" th:text="${project.progressPercentage + '%'}">38%</div>
+            <div class="progress" style="width: 140px; height: 8px;">
+              <div class="progress-bar bg-warning" role="progressbar" th:style="'width: ' + ${project.progressPercentage} + '%'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module Sub-Navigation Tabs -->
+      <div th:replace="~{projects/components/project_tabs :: project_tabs}"></div>
+
+      <!-- Tab Content Modules Container -->
+      <div class="mt-4">
+        
+        <!-- DASHBOARD OVERVIEW TAB -->
+        <div th:if="${activeTab == 'dashboard' or activeTab == 'overview'}" class="row g-4">
+          <div class="col-md-3">
+            <div class="nova-card p-3 border-start border-4 border-primary">
+              <div class="text-muted small mb-1">Approved Initial Budget</div>
+              <div class="fs-5 fw-bold text-dark" th:text="'₹ ' + ${#numbers.formatDecimal(project.approvedInitialBudget, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="nova-card p-3 border-start border-4 border-danger">
+              <div class="text-muted small mb-1">Recorded Expenditure</div>
+              <div class="fs-5 fw-bold text-danger" th:text="'₹ ' + ${#numbers.formatDecimal(project.getRecordedExpenditure(), 1, 'COMMA', 2, 'POINT')}">₹ 0.00</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="nova-card p-3 border-start border-4 border-success">
+              <div class="text-muted small mb-1">Total Paid Disbursed</div>
+              <div class="fs-5 fw-bold text-success" th:text="'₹ ' + ${#numbers.formatDecimal(project.getAmountPaid(), 1, 'COMMA', 2, 'POINT')}">₹ 0.00</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="nova-card p-3 border-start border-4 border-warning">
+              <div class="text-muted small mb-1">Outstanding Liabilities</div>
+              <div class="fs-5 fw-bold text-warning" th:text="'₹ ' + ${#numbers.formatDecimal(project.getOutstandingLiabilities(), 1, 'COMMA', 2, 'POINT')}">₹ 0.00</div>
+            </div>
+          </div>
+
+          <!-- Description & Details -->
+          <div class="col-12">
+            <div class="nova-card p-4">
+              <h5 class="font-heading fw-bold mb-3"><i class="bi bi-info-circle me-2"></i> Project Overview &amp; Specifications</h5>
+              <p class="text-dark" th:text="${project.description}">Scope description</p>
+              <div class="row g-3 mt-2 pt-3 border-top small">
+                <div class="col-md-3"><strong>Start Date:</strong> <span th:text="${project.startDate}">2026-01-15</span></div>
+                <div class="col-md-3"><strong>Expected Completion:</strong> <span th:text="${project.expectedCompletionDate}">2027-12-31</span></div>
+                <div class="col-md-3"><strong>Burn Rate:</strong> <span class="badge bg-warning text-dark" th:text="${project.getBudgetBurnRate() + '%'}">0%</span></div>
+                <div class="col-md-3"><strong>Remaining Budget:</strong> <span th:text="'₹ ' + ${#numbers.formatDecimal(project.getRemainingBudget(), 1, 'COMMA', 2, 'POINT')}">₹ 0.00</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LABOUR DIARY TAB -->
+        <div th:if="${activeTab == 'labour-diary' or activeTab == 'labour'}" class="nova-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-people me-2"></i> Daily Labour Attendance &amp; Wage Diary</h4>
+            <button th:if="${currentUser != null and (currentUser.isCompanyAdmin() or currentUser.primaryRole.name() == 'PROJECT_MANAGER' or currentUser.primaryRole.name() == 'SITE_SUPERVISOR')}" class="btn btn-hero-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLabourModal">
+              <i class="bi bi-plus-circle me-1"></i> Log Labour Attendance
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light font-heading small">
+                <tr>
+                  <th>Date</th>
+                  <th>Trade Gang Category</th>
+                  <th>Location / Floor</th>
+                  <th>Workers</th>
+                  <th>Daily Rate</th>
+                  <th>Overtime (Hrs)</th>
+                  <th>Gross Wages (₹)</th>
+                  <th>Paid (₹)</th>
+                  <th>Outstanding (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="l : ${labourEntries}">
+                  <td class="font-monospace small" th:text="${l.date}">2026-04-10</td>
+                  <td class="fw-bold" th:text="${l.category}">Masonry Gang</td>
+                  <td th:text="${l.locationFloor}">Floor 14</td>
+                  <td th:text="${l.workersCount}">25</td>
+                  <td th:text="'₹ ' + ${#numbers.formatDecimal(l.wageRatePerDay, 1, 'COMMA', 2, 'POINT')}">₹ 850.00</td>
+                  <td th:text="${l.overtimeHours}">12.5</td>
+                  <td class="fw-bold text-dark" th:text="'₹ ' + ${#numbers.formatDecimal(l.grossWages, 1, 'COMMA', 2, 'POINT')}">₹ 23,125.00</td>
+                  <td class="text-success" th:text="'₹ ' + ${#numbers.formatDecimal(l.paidAmount, 1, 'COMMA', 2, 'POINT')}">₹ 18,000.00</td>
+                  <td class="text-danger fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(l.outstandingAmount, 1, 'COMMA', 2, 'POINT')}">₹ 5,125.00</td>
+                </tr>
+                <tr th:if="${labourEntries == null or labourEntries.isEmpty()}">
+                  <td colspan="9" class="text-center text-muted py-4">No labour attendance entries recorded yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- DAILY WORK DIARY TAB -->
+        <div th:if="${activeTab == 'daily-diary' or activeTab == 'diary'}" class="nova-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-journal-check me-2"></i> Digital Daily Site Work Diary</h4>
+            <button th:if="${currentUser != null and (currentUser.isCompanyAdmin() or currentUser.primaryRole.name() == 'PROJECT_MANAGER' or currentUser.primaryRole.name() == 'SITE_SUPERVISOR')}" class="btn btn-hero-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDiaryModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Daily Log
+            </button>
+          </div>
+
+          <div class="row g-4">
+            <div th:each="d : ${diaryEntries}" class="col-12 col-md-6">
+              <div class="card h-100 shadow-sm border">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <span class="badge bg-dark font-monospace" th:text="'Day ' + ${d.dayNumber}">Day 84</span>
+                  <span class="small text-muted" th:text="${d.date} + ' | ' + ${d.weatherCondition} + ' (' + ${d.temperatureCelsius} + '°C)'">Date & Weather</span>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title font-heading fw-bold fs-6 mb-2" th:text="${d.title}">Log Title</h5>
+                  <p class="card-text small text-dark" th:text="${d.workSummary}">Work summary details...</p>
+                </div>
+              </div>
+            </div>
+            <div th:if="${diaryEntries == null or diaryEntries.isEmpty()}" class="col-12 text-center text-muted py-4">
+              No daily site work diary entries recorded yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- MATERIALS REGISTER TAB -->
+        <div th:if="${activeTab == 'materials'}" class="nova-card p-4">
+          <h4 class="font-heading fw-bold mb-4"><i class="bi bi-box-seam me-2"></i> Materials Procurement &amp; Invoices</h4>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light font-heading small">
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Supplier</th>
+                  <th>Material Description</th>
+                  <th>Total Amount (₹)</th>
+                  <th>Paid (₹)</th>
+                  <th>Balance (₹)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="inv : ${invoices}">
+                  <td class="font-monospace fw-bold" th:text="${inv.invoiceNumber}">INV-001</td>
+                  <td th:text="${inv.supplier.name}">Supplier</td>
+                  <td th:text="${inv.materialDescription}">Description</td>
+                  <td class="fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(inv.totalAmount, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
+                  <td class="text-success" th:text="'₹ ' + ${#numbers.formatDecimal(inv.paidAmount, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
+                  <td class="text-danger fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(inv.outstandingBalance, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
+                  <td><span class="badge bg-warning text-dark" th:text="${inv.status.displayName}">Unpaid</span></td>
+                </tr>
+                <tr th:if="${invoices == null or invoices.isEmpty()}">
+                  <td colspan="7" class="text-center text-muted py-4">No material procurement invoices recorded yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FINANCE LEDGER TAB -->
+        <div th:if="${activeTab == 'ledger' or activeTab == 'finance'}" class="nova-card p-4">
+          <h4 class="font-heading fw-bold mb-4"><i class="bi bi-journal-text me-2"></i> Central Financial Ledger</h4>
+          <div class="table-responsive">
+            <table class="table table-striped align-middle">
+              <thead class="table-dark font-heading small">
+                <tr>
+                  <th>Ref #</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th>Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="tx : ${transactions}">
+                  <td class="font-monospace" th:text="${tx.transactionRef}">TXN-001</td>
+                  <td th:text="${tx.transactionDate}">2026-04-10</td>
+                  <td><span class="badge bg-info text-dark" th:text="${tx.transactionType}">Type</span></td>
+                  <td th:text="${tx.category}">Category</td>
+                  <td th:text="${tx.description}">Description</td>
+                  <td class="fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
+                </tr>
+                <tr th:if="${transactions == null or transactions.isEmpty()}">
+                  <td colspan="6" class="text-center text-muted py-4">No financial transactions posted yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- OTHER TABS PLACEHOLDER -->
+        <div th:if="${activeTab != 'dashboard' and activeTab != 'overview' and activeTab != 'labour-diary' and activeTab != 'labour' and activeTab != 'daily-diary' and activeTab != 'diary' and activeTab != 'materials' and activeTab != 'ledger' and activeTab != 'finance'}" class="nova-card p-4">
+          <h4 class="font-heading fw-bold mb-3 text-capitalize"><i class="bi bi-grid me-2"></i> Module: <span th:text="${activeTab}">Tab</span></h4>
+          <p class="text-muted">Module details and active dataset for <strong th:text="${project.name}">Project</strong> loaded successfully.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Add Labour Modal -->
+  <div class="modal fade" id="addLabourModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/labour/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold">Log Labour Attendance &amp; Wages</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Trade Gang Category *</label>
+                <input type="text" name="category" class="form-control" placeholder="e.g. Masonry & Brickwork Gang" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Location / Floor</label>
+                <input type="text" name="locationFloor" class="form-control" placeholder="e.g. Floor 14, Tower A">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Workers Count *</label>
+                <input type="number" name="workersCount" class="form-control" value="1" min="1" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Daily Wage Rate (₹) *</label>
+                <input type="number" step="0.01" name="wageRatePerDay" class="form-control" value="850.00" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Amount Paid Now (₹)</label>
+                <input type="number" step="0.01" name="paidAmount" class="form-control" value="0.00">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Save Labour Log</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Diary Modal -->
+  <div class="modal fade" id="addDiaryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/diary/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold">Log Daily Work Diary</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-8">
+                <label class="form-label small fw-semibold">Log Title *</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Floor 15 Slab Casting" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Day Number *</label>
+                <input type="number" name="dayNumber" class="form-control" value="85" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Weather Condition</label>
+                <input type="text" name="weatherCondition" class="form-control" value="Clear & Sunny">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Temperature (°C)</label>
+                <input type="number" name="temperatureCelsius" class="form-control" value="30">
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Daily Work Summary *</label>
+                <textarea name="workSummary" class="form-control" rows="4" placeholder="Describe site activities, progress, material receipts, and inspections..." required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Save Work Diary Entry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div th:replace="~{components/footer :: footer}"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
