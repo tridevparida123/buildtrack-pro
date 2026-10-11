@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -17,20 +19,38 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        // Ensure at least 1 system administrator exists for initial login
-        if (userRepository.count() == 0) {
-            System.out.println("Creating Primary System Administrator Account...");
-            User admin = new User(
-                "admin",
-                "admin123",
-                "admin@buildtrack.com",
-                "System",
-                "Administrator",
-                RoleChoices.SUPER_ADMIN,
-                "BuildTrack Enterprise"
-            );
-            userRepository.save(admin);
-            System.out.println("Primary Admin account (username: admin) initialized cleanly.");
-        }
+        System.out.println("Verifying & Initializing System Administrator Account...");
+
+        // 1. Ensure 'admin' user account exists with password 'admin123'
+        Optional<User> adminOpt = userRepository.findByUsername("admin");
+        User admin = adminOpt.orElseGet(User::new);
+        admin.setUsername("admin");
+        admin.setPassword("admin123");
+        admin.setEmail("admin@buildtrack.com");
+        admin.setFirstName("System");
+        admin.setLastName("Administrator");
+        admin.setPrimaryRole(RoleChoices.SUPER_ADMIN);
+        admin.setIsApproved(true);
+        admin.setIsActive(true);
+        admin.setIsSuperuser(true);
+        admin.setOrganization("BuildTrack Enterprise");
+        userRepository.save(admin);
+
+        // 2. Ensure 'superadmin' user account exists with password 'admin123'
+        Optional<User> superAdminOpt = userRepository.findByUsername("superadmin");
+        User superAdmin = superAdminOpt.orElseGet(User::new);
+        superAdmin.setUsername("superadmin");
+        superAdmin.setPassword("admin123");
+        superAdmin.setEmail("superadmin@buildtrack.com");
+        superAdmin.setFirstName("Chief");
+        superAdmin.setLastName("Administrator");
+        superAdmin.setPrimaryRole(RoleChoices.SUPER_ADMIN);
+        superAdmin.setIsApproved(true);
+        superAdmin.setIsActive(true);
+        superAdmin.setIsSuperuser(true);
+        superAdmin.setOrganization("BuildTrack Enterprise");
+        userRepository.save(superAdmin);
+
+        System.out.println("System Administrator accounts ('admin' and 'superadmin') updated successfully with password 'admin123'.");
     }
 }

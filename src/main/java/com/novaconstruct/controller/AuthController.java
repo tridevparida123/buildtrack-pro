@@ -31,8 +31,11 @@ public class AuthController {
                               @RequestParam String password,
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isPresent() && userOpt.get().getPassword().equals(password)) {
+        String cleanUsername = username != null ? username.trim() : "";
+        String cleanPassword = password != null ? password.trim() : "";
+
+        Optional<User> userOpt = userRepository.findByUsernameIgnoreCase(cleanUsername);
+        if (userOpt.isPresent() && userOpt.get().getPassword().equals(cleanPassword)) {
             User user = userOpt.get();
             if (!Boolean.TRUE.equals(user.getIsApproved()) || !Boolean.TRUE.equals(user.getIsActive())) {
                 redirectAttributes.addFlashAttribute("error", "Your account is pending administrator approval or inactive.");
