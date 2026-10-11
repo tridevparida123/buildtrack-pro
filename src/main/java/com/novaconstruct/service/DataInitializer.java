@@ -183,7 +183,7 @@ public class DataInitializer implements CommandLineRunner {
         doc1.setReferenceNumber("NOC-MC-2025/8892");
         doc1.setIssuingAuthority("Municipal Corporation Urban Planning Dept");
         doc1.setIssueDate(LocalDate.of(2025, 11, 10));
-        doc1.setExpiryDate(LocalDate.of(2028, 11, 09));
+        doc1.setExpiryDate(LocalDate.of(2028, 11, 9));
         doc1.setStatus("Active & Approved");
         doc1.setUploadedBy(legalOfficer);
         legalRepository.save(doc1);
