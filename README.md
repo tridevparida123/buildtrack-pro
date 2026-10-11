@@ -81,7 +81,7 @@ mvn spring-boot:run
 ```
 
 Visit the application in your browser:  
-👉 **`http://localhost:8080/accounts/login`**
+👉 https://buildtrack-pro-esn8.onrender.com
 
 ---
 
