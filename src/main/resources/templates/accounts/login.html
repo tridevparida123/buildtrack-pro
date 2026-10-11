@@ -28,7 +28,7 @@
         <form method="post" th:action="@{/accounts/login}">
           <div class="mb-3">
             <label for="username" class="form-label fw-semibold small text-dark">Username or ID</label>
-            <input type="text" id="username" name="username" class="form-control form-control-lg fs-6" placeholder="Enter username (e.g. superadmin, pm_lead)" required>
+            <input type="text" id="username" name="username" class="form-control form-control-lg fs-6" placeholder="Enter username" required>
           </div>
 
           <div class="mb-4">
@@ -45,9 +45,8 @@
           </div>
 
           <div class="p-3 bg-light rounded-3 border small text-muted mt-4">
-            <div class="fw-bold text-dark mb-1"><i class="bi bi-shield-check text-success me-1"></i> Demo Credentials Available</div>
-            <div>Password for all demo accounts: <strong>Admin@12345</strong></div>
-            <div class="mt-1 font-monospace text-dark">superadmin | companyadmin | pm_lead | accountant | legal_officer | supervisor | auditor</div>
+            <div class="fw-bold text-dark mb-1"><i class="bi bi-shield-check text-success me-1"></i> Enterprise Authentication</div>
+            <div>Role-Based Access Control (RBAC) enforced for Administrator, Manager, Accountant, Legal Officer, and Supervisor portals.</div>
           </div>
         </form>
       </div>

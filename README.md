@@ -30,7 +30,7 @@ Designed with the **Nova Astro** architectural editorial aesthetic featuring cle
 | Layer | Technology |
 | :--- | :--- |
 | **Backend Framework** | Java 17+ / 21+, Spring Boot 3.3.4 (Spring MVC, Spring Data JPA) |
-| **Database Engine** | MySQL 8.0+ (with Hibernate DDL Auto Schema Generation) |
+| **Database Engine** | MySQL 8.0+ / PostgreSQL (with Hibernate DDL Auto Schema Generation) |
 | **Frontend Template Engine** | Thymeleaf 3.1+ HTML5 |
 | **UI Design System** | Bootstrap 5.3, Bootstrap Icons, Nova Architectural Theme (`/css/nova-theme.css`) |
 | **Data Visualizations** | Chart.js 4.4+ |
@@ -54,67 +54,20 @@ The system enforces strict server-side authorization checks across 7 organizatio
 
 ---
 
-## 📁 Directory Structure
-
-```
-buildtrack-pro/
-├── pom.xml                                           # Maven dependencies (Spring Boot, Data JPA, MySQL, Thymeleaf)
-├── README.md                                         # Project documentation
-├── .gitignore                                        # Java/Maven Git ignore rules
-└── src/
-    └── main/
-        ├── java/com/novaconstruct/
-        │   ├── NovaConstructApplication.java          # Spring Boot main entry point
-        │   ├── controller/
-        │   │   ├── AuthController.java               # Login, Logout, Profile, User List endpoints
-        │   │   ├── GlobalControllerAdvice.java       # User session model injector
-        │   │   └── ProjectController.java            # Project List, Create, Detail & Module POST handlers
-        │   ├── model/                                # JPA Entities & Enums
-        │   │   ├── User.java                         # User entity & RBAC permission helpers
-        │   │   ├── Project.java                      # Core Project model with live financial aggregates
-        │   │   ├── ProjectMembership.java            # User-Project role mapping
-        │   │   ├── LabourEntry.java                  # Daily labour attendance & wage calculations
-        │   │   ├── Supplier.java                     # Material vendor & GSTIN tracking
-        │   │   ├── MaterialPurchaseOrder.java        # PO procurement model
-        │   │   ├── MaterialInvoice.java              # Vendor delivery invoice & live balance recalculation
-        │   │   ├── InvoicePayment.java               # Payment settlement record
-        │   │   ├── FinancialTransaction.java         # Consolidated double-entry ledger
-        │   │   ├── BudgetAllocation.java             # Category budget breakdown
-        │   │   ├── LegalDocument.java                # Sanction plans & permits
-        │   │   ├── ProjectContact.java               # Stakeholder directory
-        │   │   ├── DailyDiaryEntry.java              # Digital work diary & site logs
-        │   │   └── WorkPlanTask.java                 # Weekly milestone scheduling
-        │   ├── repository/                           # Spring Data JPA interfaces
-        │   └── service/
-        │       └── DataInitializer.java              # Startup Data Seeder (Populates demo accounts & site data)
-        └── resources/
-            ├── application.properties                 # MySQL database connection settings
-            ├── static/
-            │   ├── css/nova-theme.css                 # Custom Nova Astro editorial design system
-            │   └── images/hero-person.png             # Site director artwork
-            └── templates/                             # Thymeleaf HTML Templates
-                ├── base.html                          # Master base layout
-                ├── accounts/                          # login.html, profile.html, user_list.html
-                ├── components/                        # navbar.html, messages.html, footer.html
-                └── projects/                          # project_list.html, project_form.html, project_detail.html
-```
-
----
-
-## 🚀 Getting Started & Local Execution
+## 🚀 Getting Started & Production Setup
 
 ### 1. Prerequisites
 - **Java Development Kit (JDK):** Version 17 or higher (`java -version`)
 - **Apache Maven:** Version 3.8+ (`mvn -version`)
-- **MySQL Database Server:** Running on `localhost:3306`
+- **Database Server:** MySQL 8.0+ or PostgreSQL
 
 ### 2. Database Configuration
 Set environment variables or update fallback values in `src/main/resources/application.properties`:
 
-```properties
-spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/novaconstruct?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
-spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}
-spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:root}
+```bash
+export SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/novaconstruct?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+export SPRING_DATASOURCE_USERNAME="root"
+export SPRING_DATASOURCE_PASSWORD="your_mysql_password"
 ```
 
 ### 3. Build & Install Dependencies
@@ -132,22 +85,6 @@ Visit the application in your browser:
 
 ---
 
-## 🔑 Demo Login Credentials
-
-Upon application startup, `DataInitializer.java` seeds 7 demonstration accounts into MySQL:
-
-| Role | Username | Default Password |
-| :--- | :--- | :--- |
-| **Super Administrator** | `superadmin` | `Admin@12345` |
-| **Company Administrator** | `companyadmin` | `Admin@12345` |
-| **Project Manager** | `pm_lead` | `Admin@12345` |
-| **Accountant** | `accountant` | `Admin@12345` |
-| **Legal Officer** | `legal_officer` | `Admin@12345` |
-| **Site Supervisor** | `supervisor` | `Admin@12345` |
-| **Read-only Auditor** | `auditor` | `Admin@12345` |
-
----
-
 ## 🔒 Security & Environment Safeguards
 
 Database configuration properties are parameterized using Spring SpEL expressions:
@@ -158,7 +95,7 @@ spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:root}
 ```
 
-No hardcoded production secrets or database passwords are saved in public source control commits.
+No hardcoded production secrets, demo credentials, or sensitive database passwords are saved in public source control commits.
 
 ---
 
