@@ -46,13 +46,13 @@
         </div>
       </div>
 
-      <!-- Module Sub-Navigation Tabs -->
+      <!-- Module Sub-Navigation Tabs Strip -->
       <div th:replace="~{projects/components/project_tabs :: project_tabs}"></div>
 
       <!-- Tab Content Modules Container -->
       <div class="mt-4">
         
-        <!-- DASHBOARD OVERVIEW TAB -->
+        <!-- 1. DASHBOARD OVERVIEW TAB -->
         <div th:if="${activeTab == 'dashboard' or activeTab == 'overview'}" class="row g-4">
           <div class="col-md-3">
             <div class="nova-card p-3 border-start border-4 border-primary">
@@ -79,11 +79,10 @@
             </div>
           </div>
 
-          <!-- Description & Details -->
           <div class="col-12">
             <div class="nova-card p-4">
               <h5 class="font-heading fw-bold mb-3"><i class="bi bi-info-circle me-2"></i> Project Overview &amp; Specifications</h5>
-              <p class="text-dark" th:text="${project.description}">Scope description</p>
+              <p class="text-dark" th:text="${project.description != null and !project.description.isBlank() ? project.description : 'Commercial multi-story construction project under active operational supervision.'}">Scope description</p>
               <div class="row g-3 mt-2 pt-3 border-top small">
                 <div class="col-md-3"><strong>Start Date:</strong> <span th:text="${project.startDate}">2026-01-15</span></div>
                 <div class="col-md-3"><strong>Expected Completion:</strong> <span th:text="${project.expectedCompletionDate}">2027-12-31</span></div>
@@ -94,12 +93,12 @@
           </div>
         </div>
 
-        <!-- LABOUR DIARY TAB -->
+        <!-- 2. LABOUR DIARY TAB -->
         <div th:if="${activeTab == 'labour-diary' or activeTab == 'labour'}" class="nova-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="font-heading fw-bold mb-0"><i class="bi bi-people me-2"></i> Daily Labour Attendance &amp; Wage Diary</h4>
-            <button th:if="${currentUser != null and (currentUser.isCompanyAdmin() or currentUser.primaryRole.name() == 'PROJECT_MANAGER' or currentUser.primaryRole.name() == 'SITE_SUPERVISOR')}" class="btn btn-hero-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLabourModal">
-              <i class="bi bi-plus-circle me-1"></i> Log Labour Attendance
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addLabourModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Labour Attendance
             </button>
           </div>
 
@@ -131,44 +130,22 @@
                   <td class="text-danger fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(l.outstandingAmount, 1, 'COMMA', 2, 'POINT')}">₹ 5,125.00</td>
                 </tr>
                 <tr th:if="${labourEntries == null or labourEntries.isEmpty()}">
-                  <td colspan="9" class="text-center text-muted py-4">No labour attendance entries recorded yet.</td>
+                  <td colspan="9" class="text-center text-muted py-4">No labour attendance entries recorded yet. Click <strong>+ Add Labour Attendance</strong> to log work.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- DAILY WORK DIARY TAB -->
-        <div th:if="${activeTab == 'daily-diary' or activeTab == 'diary'}" class="nova-card p-4">
+        <!-- 3. MATERIALS REGISTER TAB -->
+        <div th:if="${activeTab == 'materials'}" class="nova-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-journal-check me-2"></i> Digital Daily Site Work Diary</h4>
-            <button th:if="${currentUser != null and (currentUser.isCompanyAdmin() or currentUser.primaryRole.name() == 'PROJECT_MANAGER' or currentUser.primaryRole.name() == 'SITE_SUPERVISOR')}" class="btn btn-hero-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addDiaryModal">
-              <i class="bi bi-plus-circle me-1"></i> Add Daily Log
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-box-seam me-2"></i> Materials Procurement &amp; Invoices</h4>
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addInvoiceModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Material Invoice
             </button>
           </div>
 
-          <div class="row g-4">
-            <div th:each="d : ${diaryEntries}" class="col-12 col-md-6">
-              <div class="card h-100 shadow-sm border">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                  <span class="badge bg-dark font-monospace" th:text="'Day ' + ${d.dayNumber}">Day 84</span>
-                  <span class="small text-muted" th:text="${d.date} + ' | ' + ${d.weatherCondition} + ' (' + ${d.temperatureCelsius} + '°C)'">Date & Weather</span>
-                </div>
-                <div class="card-body">
-                  <h5 class="card-title font-heading fw-bold fs-6 mb-2" th:text="${d.title}">Log Title</h5>
-                  <p class="card-text small text-dark" th:text="${d.workSummary}">Work summary details...</p>
-                </div>
-              </div>
-            </div>
-            <div th:if="${diaryEntries == null or diaryEntries.isEmpty()}" class="col-12 text-center text-muted py-4">
-              No daily site work diary entries recorded yet.
-            </div>
-          </div>
-        </div>
-
-        <!-- MATERIALS REGISTER TAB -->
-        <div th:if="${activeTab == 'materials'}" class="nova-card p-4">
-          <h4 class="font-heading fw-bold mb-4"><i class="bi bi-box-seam me-2"></i> Materials Procurement &amp; Invoices</h4>
           <div class="table-responsive">
             <table class="table table-hover align-middle">
               <thead class="table-light font-heading small">
@@ -176,6 +153,7 @@
                   <th>Invoice #</th>
                   <th>Supplier</th>
                   <th>Material Description</th>
+                  <th>Quantity</th>
                   <th>Total Amount (₹)</th>
                   <th>Paid (₹)</th>
                   <th>Balance (₹)</th>
@@ -187,22 +165,29 @@
                   <td class="font-monospace fw-bold" th:text="${inv.invoiceNumber}">INV-001</td>
                   <td th:text="${inv.supplier.name}">Supplier</td>
                   <td th:text="${inv.materialDescription}">Description</td>
+                  <td th:text="${inv.quantity}">Quantity</td>
                   <td class="fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(inv.totalAmount, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
                   <td class="text-success" th:text="'₹ ' + ${#numbers.formatDecimal(inv.paidAmount, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
                   <td class="text-danger fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(inv.outstandingBalance, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
                   <td><span class="badge bg-warning text-dark" th:text="${inv.status.displayName}">Unpaid</span></td>
                 </tr>
                 <tr th:if="${invoices == null or invoices.isEmpty()}">
-                  <td colspan="7" class="text-center text-muted py-4">No material procurement invoices recorded yet.</td>
+                  <td colspan="8" class="text-center text-muted py-4">No material invoices recorded yet. Click <strong>+ Add Material Invoice</strong> to log material bills.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- FINANCE LEDGER TAB -->
+        <!-- 4. FINANCE LEDGER TAB -->
         <div th:if="${activeTab == 'ledger' or activeTab == 'finance'}" class="nova-card p-4">
-          <h4 class="font-heading fw-bold mb-4"><i class="bi bi-journal-text me-2"></i> Central Financial Ledger</h4>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-journal-text me-2"></i> Central Financial Ledger</h4>
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+              <i class="bi bi-plus-circle me-1"></i> Record Financial Transaction
+            </button>
+          </div>
+
           <div class="table-responsive">
             <table class="table table-striped align-middle">
               <thead class="table-dark font-heading small">
@@ -225,37 +210,246 @@
                   <td class="fw-bold" th:text="'₹ ' + ${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</td>
                 </tr>
                 <tr th:if="${transactions == null or transactions.isEmpty()}">
-                  <td colspan="6" class="text-center text-muted py-4">No financial transactions posted yet.</td>
+                  <td colspan="6" class="text-center text-muted py-4">No financial transactions posted yet. Click <strong>+ Record Financial Transaction</strong> to add expenses/receipts.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- OTHER TABS PLACEHOLDER -->
-        <div th:if="${activeTab != 'dashboard' and activeTab != 'overview' and activeTab != 'labour-diary' and activeTab != 'labour' and activeTab != 'daily-diary' and activeTab != 'diary' and activeTab != 'materials' and activeTab != 'ledger' and activeTab != 'finance'}" class="nova-card p-4">
-          <h4 class="font-heading fw-bold mb-3 text-capitalize"><i class="bi bi-grid me-2"></i> Module: <span th:text="${activeTab}">Tab</span></h4>
-          <p class="text-muted">Module details and active dataset for <strong th:text="${project.name}">Project</strong> loaded successfully.</p>
+        <!-- 5. BUDGET ALLOCATION TAB -->
+        <div th:if="${activeTab == 'budget'}" class="nova-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-pie-chart me-2"></i> Category Budget Allocations</h4>
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Budget Allocation
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light font-heading small">
+                <tr>
+                  <th>Category Name</th>
+                  <th>Allocated Amount (₹)</th>
+                  <th>Notes & Specifications</th>
+                  <th>Last Updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="b : ${allocations}">
+                  <td class="fw-bold" th:text="${b.category}">Civil Structure</td>
+                  <td class="fw-bold text-primary" th:text="'₹ ' + ${#numbers.formatDecimal(b.allocatedAmount, 1, 'COMMA', 2, 'POINT')}">₹ 1,00,00,000.00</td>
+                  <td th:text="${b.notes}">Notes</td>
+                  <td class="font-monospace small" th:text="${#temporals.format(b.updatedAt, 'yyyy-MM-dd HH:mm')}">Date</td>
+                </tr>
+                <tr th:if="${allocations == null or allocations.isEmpty()}">
+                  <td colspan="4" class="text-center text-muted py-4">No budget allocations specified yet. Click <strong>+ Add Budget Allocation</strong> to set budget targets.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 6. LEGAL DOCUMENTS TAB -->
+        <div th:if="${activeTab == 'legal-docs' or activeTab == 'legal'}" class="nova-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-file-earmark-lock me-2"></i> Statutory Permits &amp; Legal Clearances</h4>
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addLegalModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Legal Document
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light font-heading small">
+                <tr>
+                  <th>Title</th>
+                  <th>Document Type</th>
+                  <th>Ref Number</th>
+                  <th>Issuing Authority</th>
+                  <th>Issue Date</th>
+                  <th>Expiry Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="doc : ${legalDocs}">
+                  <td class="fw-bold" th:text="${doc.title}">Sanction Plan</td>
+                  <td th:text="${doc.documentType}">Building Plan</td>
+                  <td class="font-monospace" th:text="${doc.referenceNumber}">NOC-1234</td>
+                  <td th:text="${doc.issuingAuthority}">Municipal Dept</td>
+                  <td th:text="${doc.issueDate}">2025-11-10</td>
+                  <td th:text="${doc.expiryDate != null ? doc.expiryDate : 'N/A'}">2028-11-09</td>
+                  <td><span class="badge bg-success" th:text="${doc.status}">Active</span></td>
+                </tr>
+                <tr th:if="${legalDocs == null or legalDocs.isEmpty()}">
+                  <td colspan="7" class="text-center text-muted py-4">No statutory legal documents uploaded yet. Click <strong>+ Add Legal Document</strong> to record permits.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7. PEOPLE & CONTACTS TAB -->
+        <div th:if="${activeTab == 'contacts' or activeTab == 'people'}" class="nova-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-person-lines-fill me-2"></i> Project Stakeholders &amp; Contacts</h4>
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addContactModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Contact Person
+            </button>
+          </div>
+
+          <div class="row g-4">
+            <div th:each="c : ${contacts}" class="col-12 col-md-6 col-lg-4">
+              <div class="card h-100 border shadow-sm p-3">
+                <div class="fw-bold fs-5 text-dark" th:text="${c.name}">Name</div>
+                <div class="badge bg-primary text-wrap mb-2" th:text="${c.roleAssignment}">Role</div>
+                <div class="small text-muted mb-1" th:if="${c.organization != null and !c.organization.isBlank()}"><i class="bi bi-building me-1"></i><span th:text="${c.organization}">Org</span></div>
+                <div class="small text-dark mb-1" th:if="${c.phone != null and !c.phone.isBlank()}"><i class="bi bi-telephone me-1"></i><span th:text="${c.phone}">Phone</span></div>
+                <div class="small text-dark" th:if="${c.email != null and !c.email.isBlank()}"><i class="bi bi-envelope me-1"></i><span th:text="${c.email}">Email</span></div>
+              </div>
+            </div>
+            <div th:if="${contacts == null or contacts.isEmpty()}" class="col-12 text-center text-muted py-4">
+              No project contacts recorded yet. Click <strong>+ Add Contact Person</strong> to add team members and architects.
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. DAILY WORK DIARY TAB -->
+        <div th:if="${activeTab == 'daily-diary' or activeTab == 'diary'}" class="nova-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-camera me-2"></i> Digital Daily Site Work Diary</h4>
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addDiaryModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Work Diary Log
+            </button>
+          </div>
+
+          <div class="row g-4">
+            <div th:each="d : ${diaryEntries}" class="col-12 col-md-6">
+              <div class="card h-100 shadow-sm border">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                  <span class="badge bg-dark font-monospace" th:text="'Day ' + ${d.dayNumber}">Day 1</span>
+                  <span class="small text-muted" th:text="${d.date} + ' | ' + ${d.weatherCondition} + ' (' + ${d.temperatureCelsius} + '°C)'">Date & Weather</span>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title font-heading fw-bold fs-6 mb-2" th:text="${d.title}">Log Title</h5>
+                  <p class="card-text small text-dark" th:text="${d.workSummary}">Work summary details...</p>
+                </div>
+              </div>
+            </div>
+            <div th:if="${diaryEntries == null or diaryEntries.isEmpty()}" class="col-12 text-center text-muted py-4">
+              No daily site work diary entries recorded yet. Click <strong>+ Add Work Diary Log</strong> to write today's site report.
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. WORK PLAN TAB -->
+        <div th:if="${activeTab == 'work-schedule' or activeTab == 'schedule'}" class="nova-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-heading fw-bold mb-0"><i class="bi bi-calendar-week me-2"></i> Weekly Work Schedule &amp; Milestones</h4>
+            <button class="btn btn-hero-primary btn-sm px-3 py-2" data-bs-toggle="modal" data-bs-target="#addWorkPlanModal">
+              <i class="bi bi-plus-circle me-1"></i> Add Work Plan Task
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light font-heading small">
+                <tr>
+                  <th>Task Title</th>
+                  <th>Work Area</th>
+                  <th>Start Date</th>
+                  <th>Target Completion</th>
+                  <th>Progress (%)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="task : ${planTasks}">
+                  <td class="fw-bold" th:text="${task.title}">Slab Casting</td>
+                  <td th:text="${task.workArea}">Tower A</td>
+                  <td class="font-monospace small" th:text="${task.startDate}">2026-04-10</td>
+                  <td class="font-monospace small" th:text="${task.targetDate}">2026-04-24</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="progress flex-grow-1" style="height: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar" th:style="'width: ' + ${task.progressPercentage} + '%'"></div>
+                      </div>
+                      <span class="small fw-bold" th:text="${task.progressPercentage + '%'}">45%</span>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-primary" th:text="${task.status}">In Progress</span></td>
+                </tr>
+                <tr th:if="${planTasks == null or planTasks.isEmpty()}">
+                  <td colspan="6" class="text-center text-muted py-4">No work schedule tasks added yet. Click <strong>+ Add Work Plan Task</strong> to schedule milestones.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 10. REPORTS TAB -->
+        <div th:if="${activeTab == 'reports'}" class="nova-card p-4">
+          <h4 class="font-heading fw-bold mb-4"><i class="bi bi-bar-chart me-2"></i> Project Operations &amp; Financial Reports</h4>
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="p-3 bg-light rounded-3 border">
+                <h6 class="fw-bold text-dark mb-2">Recorded Expenditure Report</h6>
+                <div class="fs-4 fw-bold text-danger mb-2" th:text="'₹ ' + ${#numbers.formatDecimal(project.getRecordedExpenditure(), 1, 'COMMA', 2, 'POINT')}">₹ 0.00</div>
+                <p class="small text-muted mb-0">Total recognized project expenditure across labour gross wages, active material invoices, and site disbursements.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-3 bg-light rounded-3 border">
+                <h6 class="fw-bold text-dark mb-2">Total Disbursed Payments</h6>
+                <div class="fs-4 fw-bold text-success mb-2" th:text="'₹ ' + ${#numbers.formatDecimal(project.getAmountPaid(), 1, 'COMMA', 2, 'POINT')}">₹ 0.00</div>
+                <p class="small text-muted mb-0">Total cash settlements and RTGS bank disbursements made to date.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-3 bg-light rounded-3 border">
+                <h6 class="fw-bold text-dark mb-2">Outstanding Dues</h6>
+                <div class="fs-4 fw-bold text-warning mb-2" th:text="'₹ ' + ${#numbers.formatDecimal(project.getOutstandingLiabilities(), 1, 'COMMA', 2, 'POINT')}">₹ 0.00</div>
+                <p class="small text-muted mb-0">Unsettled vendor balances and pending daily labour wages.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 11. SETTINGS TAB -->
+        <div th:if="${activeTab == 'settings'}" class="nova-card p-4">
+          <h4 class="font-heading fw-bold mb-4"><i class="bi bi-gear me-2"></i> Project Settings &amp; Configuration</h4>
+          <div class="row g-3">
+            <div class="col-md-6"><strong>Project Name:</strong> <span th:text="${project.name}">Name</span></div>
+            <div class="col-md-6"><strong>Project Code:</strong> <span class="font-monospace fw-bold" th:text="${project.code}">PRJ-001</span></div>
+            <div class="col-md-6"><strong>Approved Budget:</strong> <span th:text="'₹ ' + ${#numbers.formatDecimal(project.approvedInitialBudget, 1, 'COMMA', 2, 'POINT')}">₹ 0.00</span></div>
+            <div class="col-md-6"><strong>Status:</strong> <span class="badge bg-success" th:text="${project.status.displayName}">Active</span></div>
+          </div>
         </div>
 
       </div>
     </div>
   </main>
 
-  <!-- Add Labour Modal -->
+  <!-- ==========================================================================
+       INTERACTIVE MODAL DIALOGS FOR ADDING DATA TO EVERY TAB
+       ========================================================================== -->
+
+  <!-- 1. Add Labour Attendance Modal -->
   <div class="modal fade" id="addLabourModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <form method="post" th:action="@{'/projects/' + ${project.id} + '/labour/create'}">
           <div class="modal-header">
-            <h5 class="modal-title font-heading fw-bold">Log Labour Attendance &amp; Wages</h5>
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-people me-2"></i> Log Daily Labour Attendance &amp; Wages</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Trade Gang Category *</label>
-                <input type="text" name="category" class="form-control" placeholder="e.g. Masonry & Brickwork Gang" required>
+                <input type="text" name="category" class="form-control" placeholder="e.g. Structural Masonry Gang" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Location / Floor</label>
@@ -273,6 +467,10 @@
                 <label class="form-label small fw-semibold">Amount Paid Now (₹)</label>
                 <input type="number" step="0.01" name="paidAmount" class="form-control" value="0.00">
               </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Notes / Shift Details</label>
+                <input type="text" name="notes" class="form-control" placeholder="Optional work remarks...">
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -284,13 +482,220 @@
     </div>
   </div>
 
-  <!-- Add Diary Modal -->
+  <!-- 2. Add Material Invoice Modal -->
+  <div class="modal fade" id="addInvoiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/invoice/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-box-seam me-2"></i> Add Material Procurement Invoice</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Supplier / Vendor Name *</label>
+                <input type="text" name="supplierName" class="form-control" placeholder="e.g. Ultratech Cement Ltd" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Invoice Number *</label>
+                <input type="text" name="invoiceNumber" class="form-control" placeholder="e.g. INV-2026-991" required>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label small fw-semibold">Material Description *</label>
+                <input type="text" name="materialDescription" class="form-control" placeholder="e.g. OPC 53 Grade Cement (500 Bags)" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Quantity</label>
+                <input type="text" name="quantity" class="form-control" placeholder="500 Bags / 40 cu.m">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Total Invoice Amount (₹) *</label>
+                <input type="number" step="0.01" name="totalAmount" class="form-control" placeholder="0.00" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Payment Due Date</label>
+                <input type="date" name="dueDateStr" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Save Invoice</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Record Financial Transaction Modal -->
+  <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/transaction/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-journal-text me-2"></i> Record Financial Transaction</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Transaction Type *</label>
+                <select name="transactionType" class="form-select" required>
+                  <option value="EXPENSE">Site Direct Expense</option>
+                  <option value="PAYMENT_SUPPLIER">Vendor Payment Disbursement</option>
+                  <option value="PAYMENT_LABOUR">Labour Wage Settlement</option>
+                  <option value="RECEIPT_CLIENT">Client Receipt / Advance</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Category *</label>
+                <input type="text" name="category" class="form-control" placeholder="e.g. Civil Materials / Fuel" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Transaction Description *</label>
+                <input type="text" name="description" class="form-control" placeholder="Enter transaction details..." required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Amount (₹) *</label>
+                <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Post Transaction</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Add Budget Allocation Modal -->
+  <div class="modal fade" id="addBudgetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/budget/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-pie-chart me-2"></i> Add Budget Category Allocation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Category Name *</label>
+                <input type="text" name="category" class="form-control" placeholder="e.g. Civil Structure & Concrete" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Allocated Budget Amount (₹) *</label>
+                <input type="number" step="0.01" name="allocatedAmount" class="form-control" placeholder="1000000.00" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Notes / Breakdown</label>
+                <input type="text" name="notes" class="form-control" placeholder="Specifications...">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Save Budget Target</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Add Legal Document Modal -->
+  <div class="modal fade" id="addLegalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/legal-doc/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-file-earmark-lock me-2"></i> Record Legal Document / Permit</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Document Title *</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Municipal Building Sanction" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Document Type *</label>
+                <input type="text" name="documentType" class="form-control" placeholder="e.g. Plan Sanction / NOC" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Reference Number</label>
+                <input type="text" name="referenceNumber" class="form-control" placeholder="NOC-MC-2026/102">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Issuing Authority</label>
+                <input type="text" name="issuingAuthority" class="form-control" placeholder="e.g. Municipal Corporation">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Expiry Date</label>
+                <input type="date" name="expiryDateStr" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Save Legal Record</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Add Contact Person Modal -->
+  <div class="modal fade" id="addContactModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/contact/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-person-lines-fill me-2"></i> Add Stakeholder / Contact</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Full Name *</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. Ar. Sandeep Singhania" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Role / Assignment *</label>
+                <input type="text" name="roleAssignment" class="form-control" placeholder="e.g. Principal Structural Architect" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Company / Organization</label>
+                <input type="text" name="organization" class="form-control" placeholder="Singhania Design Studio">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Phone Number</label>
+                <input type="text" name="phone" class="form-control" placeholder="+91-9800011122">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="email@domain.com">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Add Contact</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Add Work Diary Log Modal -->
   <div class="modal fade" id="addDiaryModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <form method="post" th:action="@{'/projects/' + ${project.id} + '/diary/create'}">
           <div class="modal-header">
-            <h5 class="modal-title font-heading fw-bold">Log Daily Work Diary</h5>
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-camera me-2"></i> Log Daily Work Diary</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -301,7 +706,7 @@
               </div>
               <div class="col-md-4">
                 <label class="form-label small fw-semibold">Day Number *</label>
-                <input type="number" name="dayNumber" class="form-control" value="85" required>
+                <input type="number" name="dayNumber" class="form-control" value="1" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Weather Condition</label>
@@ -309,7 +714,7 @@
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold">Temperature (°C)</label>
-                <input type="number" name="temperatureCelsius" class="form-control" value="30">
+                <input type="number" name="temperatureCelsius" class="form-control" value="28">
               </div>
               <div class="col-12">
                 <label class="form-label small fw-semibold">Daily Work Summary *</label>
@@ -320,6 +725,53 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-hero-primary">Save Work Diary Entry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Add Work Plan Task Modal -->
+  <div class="modal fade" id="addWorkPlanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form method="post" th:action="@{'/projects/' + ${project.id} + '/work-plan/create'}">
+          <div class="modal-header">
+            <h5 class="modal-title font-heading fw-bold"><i class="bi bi-calendar-week me-2"></i> Add Work Plan Milestone Task</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Task Title *</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Floor 15 Slab Casting" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Work Area / Tower *</label>
+                <input type="text" name="workArea" class="form-control" placeholder="e.g. Tower A - Floor 15" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Progress (%)</label>
+                <input type="number" name="progressPercentage" class="form-control" value="0" min="0" max="100">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Status</label>
+                <select name="status" class="form-select">
+                  <option value="Planned">Planned</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Delayed">Delayed</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-semibold">Target Completion Date</label>
+                <input type="date" name="targetDateStr" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-hero-primary">Save Task Milestone</button>
           </div>
         </form>
       </div>
